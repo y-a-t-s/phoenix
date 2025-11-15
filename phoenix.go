@@ -4,14 +4,23 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"golang.org/x/net/proxy"
 
 	"github.com/y-a-t-s/firebird"
 )
 
-const HOST = "kiwifarms.net"
 const ONION_HOST = "kiwifarmsaaf4t2h7gc3dfc5ojhmqruw2nit3uejrpiagrxeuxiyxcyd.onion"
+
+func hostURL() string {
+	host := os.Getenv("KF_HOST")
+	if host == "" {
+		return ONION_HOST
+	}
+
+	return host
+}
 
 func main() {
 	p := proxy.FromEnvironment()
@@ -22,7 +31,7 @@ func main() {
 	hc := http.Client{}
 	hc.Transport = tr
 
-	c, err := firebird.NewChallenge(hc, ONION_HOST)
+	c, err := firebird.NewChallenge(hc, hostURL())
 	if err != nil {
 		panic(err)
 	}
